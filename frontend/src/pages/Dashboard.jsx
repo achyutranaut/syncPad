@@ -65,7 +65,7 @@ function Dashboard() {
             <span className="blink-cursor inline-block w-2 h-12 bg-[var(--accent)] ml-2 align-middle" />
           </h1>
           <p className="animate-fade-up stagger-2 text-[var(--text-secondary)] text-lg max-w-md leading-relaxed">
-            Two people, one document, zero conflicts — CRDTs merge every
+            Mutliple users, one document, zero conflicts — CRDTs merge every
             keystroke into a single consistent truth, live.
           </p>
         </div>
