@@ -30,7 +30,7 @@ A production-ready collaborative code editor built with the MERN stack that enab
                 |  CodeMirror + Yjs     |
                 +-----------+-----------+
                             |
-                     WebSocket (Y-WebSocket)
+                     WebSocket (y-websocket)
                             |
                 +-----------v-----------+
                 | Express + ws Server   |
@@ -40,12 +40,13 @@ A production-ready collaborative code editor built with the MERN stack that enab
                      MongoDB Persistence
 ```
 
+**How a keystroke travels:** the editor converts each edit into a CRDT operation → broadcasts it over WebSocket → the server relays it to every other connected client for that room → each client merges the operation into its own local Yjs document automatically. The server also holds the canonical in-memory copy per room and periodically flushes its encoded state to MongoDB, so documents survive restarts and reconnects.
+
 ---
 
 ## 🛠 Tech Stack
 
-### Frontend
-
+**Frontend**
 - React (Vite)
 - React Router
 - Tailwind CSS
@@ -54,11 +55,10 @@ A production-ready collaborative code editor built with the MERN stack that enab
 - y-websocket
 - y-codemirror.next
 
-### Backend
-
+**Backend**
 - Node.js
 - Express.js
-- MongoDB (Native Driver)
+- MongoDB (native driver)
 - ws
 - y-websocket
 - dotenv
@@ -68,15 +68,15 @@ A production-ready collaborative code editor built with the MERN stack that enab
 
 ## ⚙️ How It Works
 
-1. User enters a display name.
-2. A new room is created or an existing room is joined.
-3. A shared **Yjs document** is initialized.
-4. Every edit is converted into CRDT operations.
-5. Operations are broadcast through WebSockets.
-6. Other clients merge updates automatically.
-7. The server periodically stores the latest document state in MongoDB.
+1. User enters a display name (stored locally, no account required).
+2. A new room is created or an existing room is joined via its link.
+3. A shared **Yjs document** is initialized for that room.
+4. Every edit is converted into CRDT operations, not raw text diffs.
+5. Operations are broadcast to all connected clients over WebSocket.
+6. Other clients merge incoming updates automatically — no locking, no manual conflict resolution.
+7. The server persists the latest document state to MongoDB, so content survives disconnects and restarts.
 
-Because SyncPad uses **Conflict-free Replicated Data Types (CRDTs)**, users can type simultaneously without merge conflicts or document locking.
+Because SyncPad uses **Conflict-free Replicated Data Types (CRDTs)**, users can type simultaneously — even in the exact same spot — without merge conflicts or document locking.
 
 ---
 
@@ -87,14 +87,18 @@ syncPad/
 │
 ├── frontend/
 │   ├── src/
-│   ├── public/
-│   └── ...
+│   │   ├── components/    # CollaborativeEditor, PresenceBar, ThemeToggle, etc.
+│   │   ├── hooks/         # useYjsDoc, useTheme, useUserName, useOwnerId
+│   │   ├── pages/         # Dashboard, EditorRoom
+│   │   └── lib/           # color utilities
+│   └── public/
 │
 ├── backend/
 │   ├── routes/
-│   ├── websocket/
-│   ├── db/
-│   └── ...
+│   │   ├── root.js
+│   │   └── api/docs.js    # room list + creation endpoints
+│   ├── config/            # CORS allowlist
+│   └── index.js           # Express + WebSocket + Yjs persistence
 │
 └── README.md
 ```
@@ -104,12 +108,12 @@ syncPad/
 ## 🔌 API
 
 | Method | Endpoint | Description |
-|---------|----------|-------------|
+|--------|----------|-------------|
 | GET | `/health` | Health check |
-| GET | `/api/docs?ownerId=` | Fetch user's recent documents |
-| POST | `/api/docs` | Create a new document |
+| GET | `/api/docs?ownerId=<id>` | Fetch documents created by this browser's owner ID |
+| POST | `/api/docs/create` | Register a new room, tagging it with its creator's owner ID |
 
-> Authentication is intentionally omitted in this version. Documents are currently isolated using a browser-generated session `ownerId`.
+> Authentication is intentionally omitted in this version. Rooms are scoped to a browser-generated, anonymous `ownerId` stored in `localStorage` — good enough to keep each person's dashboard showing only their own rooms, without the overhead of real accounts.
 
 ---
 
@@ -122,8 +126,6 @@ git clone https://github.com/achyutranaut/syncPad.git
 cd syncPad
 ```
 
----
-
 ### Backend
 
 ```bash
@@ -135,15 +137,14 @@ Create a `.env` file:
 
 ```env
 PORT=4000
-MONGO_URI=mongodb+srv:
+MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/?retryWrites=true&w=majority
+```
 
 Run:
 
 ```bash
 npm run dev
 ```
-
----
 
 ### Frontend
 
@@ -170,18 +171,10 @@ npm run dev
 ## 📸 Screenshots
 
 ### Dashboard
-
 ![Dashboard](./assets/dashboard1.png)
-![Dashboard](./assets/dashboard1.png)
+![Dashboard](./assets/dashboard2.png)
 
-### Collaborative Editor
-
-![Editor](./assets/editor.png)
-
-### Live Presence
-
-![Presence](./assets/presence1.png)
-![Presence](./assets/presence2.png)
+---
 
 ## 🔮 Future Improvements
 
@@ -189,6 +182,7 @@ npm run dev
 - Private and invite-only rooms
 - Read-only and editor permissions
 - Version history with Yjs snapshots
+- Multi-language support (currently JavaScript only)
 - Markdown & rich-text support
 - Integrated chat/comments
 - Rate limiting
