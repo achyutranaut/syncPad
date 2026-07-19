@@ -20,7 +20,7 @@ async function initMongo() {
   await client.connect();
   const db = client.db('syncpad');
   docsCollection = db.collection('documents');
-  
+
   app.locals.docsCollection = docsCollection;
 
   console.log('[mongo] connected');

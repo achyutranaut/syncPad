@@ -1,4 +1,5 @@
 import { useState } from 'react';
+
 function NamePromptModal({ onSubmit, onClose, initialValue = '' }) {
   const [value, setValue] = useState(initialValue);
   const isEditing = Boolean(onClose);

@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
     }
 
     const docs = await docsCollection
-      .find({ ownerId }, { projection: { docName: 1, updatedAt: 1, _id: 0 } })
+      .find({ participants: ownerId }, { projection: { docName: 1, updatedAt: 1, _id: 0 } })
       .sort({ updatedAt: -1 })
       .toArray();
 
@@ -40,7 +40,10 @@ router.post('/', async (req, res) => {
 
     await docsCollection.updateOne(
       { docName },
-      { $setOnInsert: { docName, ownerId, createdAt: new Date(), updatedAt: new Date() } },
+      {
+        $setOnInsert: { docName, ownerId, createdAt: new Date(), updatedAt: new Date() },
+        $addToSet: { participants: ownerId },
+      },
       { upsert: true }
     );
 

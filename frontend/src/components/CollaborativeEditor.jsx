@@ -17,6 +17,7 @@ function CollaborativeEditor({ ydoc, provider }) {
     const ytext = ydoc.getText('shared-text');
 
     const { color, colorLight } = getColorPairForClientId(provider.awareness.clientID);
+
     provider.awareness.setLocalStateField('user', {
       name: name || 'User' + (provider.awareness.clientID % 1000),
       color,
