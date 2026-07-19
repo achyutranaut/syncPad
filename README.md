@@ -4,7 +4,7 @@ A production-ready collaborative code editor built with the MERN stack that enab
 
 > Real-time collaboration • Conflict-free editing • Persistent documents • Live user presence
 
-🌐 **Live Demo:** https://your-netlify-url.netlify.app
+🌐 **Live Demo:** https://syncpad-dev.netlify.app/
 
 ---
 
