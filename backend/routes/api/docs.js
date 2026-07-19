@@ -53,4 +53,28 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.delete('/:docName', async (req, res) => {
+  try {
+    const { docName } = req.params;
+    const docsCollection = req.app.locals.docsCollection;
+    const liveDocs = req.app.locals.liveDocs;
+
+    if (!docsCollection) {
+      return res.status(503).json({ error: 'Database not ready yet' });
+    }
+
+    const liveDoc = liveDocs?.get(docName);
+    if (liveDoc) {
+      const ytext = liveDoc.getText('shared-text');
+      ytext.delete(0, ytext.length);
+    }
+
+    await docsCollection.deleteOne({ docName });
+
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete document' });
+  }
+});
+
 module.exports = router;
