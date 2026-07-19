@@ -5,7 +5,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const { WebSocketServer } = require('ws');
-const { setupWSConnection, setPersistence } = require('y-websocket/bin/utils');
+const { setupWSConnection, setPersistence, docs } = require('y-websocket/bin/utils');
 const { MongoClient } = require('mongodb');
 const Y = require('yjs');
 const corsOptions = require('./config/corsOptions');
@@ -22,6 +22,7 @@ async function initMongo() {
   docsCollection = db.collection('documents');
 
   app.locals.docsCollection = docsCollection;
+  app.locals.liveDocs = docs;
 
   console.log('[mongo] connected');
 }
