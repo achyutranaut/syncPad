@@ -10,7 +10,7 @@ function Dashboard() {
   const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
-    fetch('http://localhost:4000/api/docs')
+    fetch(`${import.meta.env.VITE_API_URL}/api/docs`)
       .then((res) => res.json())
       .then(setDocs)
       .catch((err) => console.error('Failed to load docs:', err));

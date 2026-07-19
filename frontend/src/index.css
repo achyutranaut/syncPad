@@ -6,6 +6,12 @@
   --font-mono: 'JetBrains Mono', monospace;
 }
 
+/* ============================================
+   THEME TOKENS — dark (default) + light override
+   Every color the app uses is a variable here.
+   Toggling data-theme on <html> swaps the whole palette.
+   ============================================ */
+
 :root,
 [data-theme='dark'] {
   --bg: #0b0e14;
@@ -59,6 +65,10 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
+/* ============================================
+   Theme toggle button
+   ============================================ */
+
 .theme-toggle {
   position: relative;
   width: 36px;
@@ -92,6 +102,10 @@ body {
   opacity: 0;
   transform: rotate(90deg) scale(0.5);
 }
+
+/* ============================================
+   Animated aurora background
+   ============================================ */
 
 .aurora-bg {
   position: fixed;
@@ -137,6 +151,10 @@ body {
   66% { transform: translate(-5%, -4%) scale(0.95); }
 }
 
+/* ============================================
+   Entrance animations (staggered)
+   ============================================ */
+
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
@@ -161,6 +179,10 @@ body {
   animation: pop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
+/* ============================================
+   Braid hero — draw-on animation
+   ============================================ */
+
 .braid-path {
   stroke-dasharray: 700;
   stroke-dashoffset: 700;
@@ -184,6 +206,10 @@ body {
   100% { r: 4; opacity: 1; }
 }
 
+/* ============================================
+   Glass card
+   ============================================ */
+
 .glass-card {
   background: color-mix(in srgb, var(--bg-elevated) 70%, transparent);
   backdrop-filter: blur(16px);
@@ -197,6 +223,10 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 12px 32px -8px color-mix(in srgb, var(--accent) 25%, transparent);
 }
+
+/* ============================================
+   Button with sheen sweep
+   ============================================ */
 
 .btn-sheen {
   position: relative;
@@ -224,6 +254,10 @@ body {
   left: 130%;
 }
 
+/* ============================================
+   Status pulse (breathing glow, not just blink)
+   ============================================ */
+
 @keyframes breathe-glow {
   0%, 100% {
     box-shadow: 0 0 0 0 currentColor;
@@ -239,6 +273,10 @@ body {
   animation: breathe-glow 2s ease-in-out infinite;
 }
 
+/* ============================================
+   Input focus ring animation
+   ============================================ */
+
 .input-glow {
   transition: border-color 0.2s ease, box-shadow 0.3s ease;
 }
@@ -247,6 +285,10 @@ body {
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 15%, transparent),
               0 0 24px -4px color-mix(in srgb, var(--accent) 25%, transparent);
 }
+
+/* ============================================
+   Cursor blink (hero wordmark)
+   ============================================ */
 
 @keyframes blink {
   0%, 49% { opacity: 1; }
@@ -257,10 +299,20 @@ body {
   animation: blink 1.1s steps(1) infinite;
 }
 
+/* ============================================
+   Doc list stagger-in
+   ============================================ */
+
 .doc-item {
   opacity: 0;
   animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* ============================================
+   CodeMirror — force visible text in both themes.
+   basicSetup ships NO color theme, so without this
+   the editor renders black-on-black in dark mode.
+   ============================================ */
 
 .cm-editor {
   background: transparent !important;
@@ -294,8 +346,17 @@ body {
   background: color-mix(in srgb, var(--accent) 25%, transparent) !important;
 }
 
-.cm-ySelectionInfo {
+/* ============================================
+   yCollab remote cursor label — force readable
+   contrast + stop it overlapping the line above.
+   Without this, the label used unstyled default
+   colors and sat flush against the previous line,
+   making it blend in / hard to read (see bug report).
+   ============================================ */
 
+.cm-ySelectionInfo {
+  /* fixed, always-readable text on a solid dark chip,
+     regardless of the per-user hue used for the caret */
   background-color: #15181f !important;
   color: #f4f5f7 !important;
   font-family: var(--font-body) !important;
@@ -304,6 +365,9 @@ body {
   padding: 2px 7px !important;
   border-radius: 4px !important;
   line-height: 1.4 !important;
+  /* push it up off the text line so it never overlaps
+     the row above, plus a small shadow to separate it
+     visually from busy code behind it */
   transform: translateY(-4px) !important;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   opacity: 1 !important;
@@ -313,6 +377,73 @@ body {
 .cm-ySelectionCaret {
   border-left-width: 2px !important;
 }
+
+/* ============================================
+   CodeMirror autocomplete dropdown — same class
+   of bug as the invisible editor text earlier:
+   basicSetup's autocomplete tooltip ships with no
+   dark-mode-aware styling, so it can render with
+   near-invisible contrast against our theme.
+   ============================================ */
+
+.cm-tooltip {
+  background: var(--bg-elevated) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.45) !important;
+  overflow: hidden;
+}
+
+.cm-tooltip-autocomplete {
+  font-family: var(--font-mono) !important;
+}
+
+.cm-tooltip-autocomplete > ul {
+  background: var(--bg-elevated) !important;
+  color: var(--text) !important;
+  padding: 4px !important;
+  max-height: 260px !important;
+}
+
+.cm-tooltip-autocomplete > ul > li {
+  color: var(--text) !important;
+  background: transparent !important;
+  padding: 4px 8px !important;
+  border-radius: 5px !important;
+}
+
+.cm-tooltip-autocomplete > ul > li[aria-selected] {
+  background: var(--accent) !important;
+  color: var(--accent-contrast) !important;
+}
+
+.cm-completionLabel {
+  color: inherit !important;
+}
+
+.cm-completionMatchedText {
+  color: var(--accent) !important;
+  text-decoration: none !important;
+  font-weight: 700;
+}
+
+.cm-tooltip-autocomplete > ul > li[aria-selected] .cm-completionMatchedText {
+  color: var(--accent-contrast) !important;
+}
+
+.cm-completionDetail {
+  color: var(--text-faint) !important;
+  font-style: normal !important;
+  margin-left: 8px;
+}
+
+.cm-completionIcon {
+  opacity: 0.7;
+}
+
+/* ============================================
+   Reduced motion
+   ============================================ */
 
 @media (prefers-reduced-motion: reduce) {
   .aurora-bg::before,

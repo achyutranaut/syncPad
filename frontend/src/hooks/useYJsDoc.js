@@ -8,7 +8,7 @@ function useYjsDoc(roomName) {
   const [status, setStatus] = useState('connecting');
 
   useEffect(() => {
-    const wsProvider = new WebsocketProvider('ws://localhost:4000', roomName, ydoc);
+    const wsProvider = new WebsocketProvider(import.meta.env.VITE_WS_URL, roomName, ydoc);
 
     const handleStatus = (event) => setStatus(event.status);
     wsProvider.on('status', handleStatus);
