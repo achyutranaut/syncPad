@@ -3,11 +3,11 @@ import { useState, useEffect, useCallback } from 'react';
 const STORAGE_KEY = 'syncpad-username';
 
 export function useUserName() {
-  const [name, setNameState] = useState(() => localStorage.getItem(STORAGE_KEY));
+  const [name, setNameState] = useState(() => sessionStorage.getItem(STORAGE_KEY));
 
   useEffect(() => {
     if (name) {
-      localStorage.setItem(STORAGE_KEY, name);
+      sessionStorage.setItem(STORAGE_KEY, name);
     }
   }, [name]);
 

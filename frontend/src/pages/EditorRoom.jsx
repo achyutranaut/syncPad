@@ -4,6 +4,7 @@ import CollaborativeEditor from '../components/CollaborativeEditor';
 import PresenceBar from '../components/PresenceBar';
 import ThemeToggle from '../components/ThemeToggle';
 import { useTheme } from '../hooks/useTheme';
+import NameBadge from '../components/NameBadge';
 
 function EditorRoom() {
   const { roomId } = useParams();
@@ -30,7 +31,10 @@ function EditorRoom() {
           >
             ← SyncPad
           </Link>
-          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+          <div className="flex items-center gap-3">
+            <NameBadge />
+            <ThemeToggle theme={theme} onToggle={toggleTheme} />
+          </div>
         </div>
 
         <div className="glass-card flex items-center justify-between gap-4 px-5 py-3 rounded-xl animate-fade-up stagger-1">

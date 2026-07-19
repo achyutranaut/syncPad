@@ -1,20 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTheme } from '../hooks/useTheme';
+import { useOwnerId } from '../hooks/useOwnerId';
 import ThemeToggle from '../components/ThemeToggle';
+import NameBadge from '../components/NameBadge';
 
 function Dashboard() {
   const [docs, setDocs] = useState([]);
   const [newRoomName, setNewRoomName] = useState('');
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const ownerId = useOwnerId();
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/docs`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/docs?ownerId=${ownerId}`)
       .then((res) => res.json())
       .then(setDocs)
       .catch((err) => console.error('Failed to load docs:', err));
-  }, []);
+  }, [ownerId]);
 
   const handleCreate = () => {
     const roomId = newRoomName.trim() || crypto.randomUUID().slice(0, 8);
@@ -27,7 +30,8 @@ function Dashboard() {
 
       <div className="relative z-10 max-w-4xl mx-auto px-6">
 
-        <div className="flex justify-end pt-6">
+        <div className="flex justify-end items-center gap-3 pt-6">
+          <NameBadge />
           <ThemeToggle theme={theme} onToggle={toggleTheme} />
         </div>
 

@@ -4,12 +4,12 @@ import { EditorView, basicSetup } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { yCollab } from 'y-codemirror.next'
 import { getColorPairForClientId } from '../lib/color'
-import { useUserName } from '../hooks/useUserName'
+import { useUserNameContext } from '../context/UserNameContext'
 
 function CollaborativeEditor({ ydoc, provider }) {
   const containerRef = useRef(null);
   const viewRef = useRef(null);
-  const { name } = useUserName();
+  const { name } = useUserNameContext();
 
   useEffect(() => {
     if (!ydoc || !provider) return;
@@ -17,11 +17,6 @@ function CollaborativeEditor({ ydoc, provider }) {
     const ytext = ydoc.getText('shared-text');
 
     const { color, colorLight } = getColorPairForClientId(provider.awareness.clientID);
-
-    // Prefer the real name the user entered in the name prompt. Fall back
-    // to a generated placeholder only if somehow no name was ever set
-    // (shouldn't normally happen, since App.jsx gates every route behind
-    // the prompt — this is just defensive).
     provider.awareness.setLocalStateField('user', {
       name: name || 'User' + (provider.awareness.clientID % 1000),
       color,

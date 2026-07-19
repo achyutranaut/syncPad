@@ -1,7 +1,7 @@
 import { useState } from 'react';
-
-function NamePromptModal({ onSubmit }) {
-  const [value, setValue] = useState('');
+function NamePromptModal({ onSubmit, onClose, initialValue = '' }) {
+  const [value, setValue] = useState(initialValue);
+  const isEditing = Boolean(onClose);
 
   const handleSubmit = () => {
     if (value.trim()) onSubmit(value);
@@ -11,10 +11,24 @@ function NamePromptModal({ onSubmit }) {
     <div
       className="fixed inset-0 z-50 flex items-center justify-center px-6"
       style={{ background: 'color-mix(in srgb, var(--bg) 85%, transparent)', backdropFilter: 'blur(6px)' }}
+      onClick={(e) => {
+        if (isEditing && e.target === e.currentTarget) onClose();
+      }}
     >
-      <div className="glass-card rounded-2xl p-6 w-full max-w-sm animate-pop-in">
+      <div className="glass-card rounded-2xl p-6 w-full max-w-sm animate-pop-in relative">
+        {isEditing && (
+          <button
+            onClick={onClose}
+            aria-label="Cancel"
+            className="absolute top-4 right-4 text-[var(--text-faint)] hover:text-[var(--text)]
+                       transition-colors text-lg leading-none"
+          >
+            ×
+          </button>
+        )}
+
         <p className="font-mono text-[11px] tracking-[0.15em] uppercase text-[var(--text-muted)] mb-2">
-          Welcome to SyncPad
+          {isEditing ? 'Update your name' : 'Welcome to SyncPad'}
         </p>
         <h2 className="font-display text-xl font-semibold text-[var(--text)] mb-4">
           What should we call you?
@@ -38,10 +52,11 @@ function NamePromptModal({ onSubmit }) {
                      transition-transform duration-150 active:scale-[0.97] hover:brightness-105
                      disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
         >
-          Continue →
+          {isEditing ? 'Save' : 'Continue →'}
         </button>
         <p className="text-[11px] text-[var(--text-faint)] mt-3 text-center">
-          Shown to others while you're editing together. Saved on this device only.
+          Shown to others while you're editing together. Saved for this browser tab only —
+          open a new tab to join as someone else.
         </p>
       </div>
     </div>

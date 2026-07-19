@@ -20,10 +20,7 @@ async function initMongo() {
   await client.connect();
   const db = client.db('syncpad');
   docsCollection = db.collection('documents');
-
-  // Expose the collection to route handlers via app.locals, since
-  // docsCollection is only assigned here (after the async Mongo connect
-  // resolves) and route files can't see this function's local variables.
+  
   app.locals.docsCollection = docsCollection;
 
   console.log('[mongo] connected');
@@ -63,6 +60,7 @@ setPersistence({
 });
 
 app.use(cors(corsOptions));
+app.use(express.json());
 app.use('/', require('./routes/root'));
 app.use('/api/docs', require('./routes/api/docs'));
 
